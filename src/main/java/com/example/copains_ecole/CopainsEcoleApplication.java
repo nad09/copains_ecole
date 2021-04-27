@@ -6,8 +6,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CopainsEcoleApplication {
 
+
+
 	public static void main(String[] args) {
 		SpringApplication.run(CopainsEcoleApplication.class, args);
+
+		System.out.println("Test");
 	}
 
 }
