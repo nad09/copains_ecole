@@ -12,7 +12,6 @@ public class CopainsEcoleApplication {
 		SpringApplication.run(CopainsEcoleApplication.class, args);
 
 		System.out.println("Test Corentin  !");
-		System.out.println("Test Brod  !");
 	}
 
 }
