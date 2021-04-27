@@ -10,6 +10,9 @@ import java.util.ArrayList;
 @Repository
 public interface UserDao extends JpaRepository<UserBean, Long> {
     ArrayList<UserBean> findByPseudo(String pseudo);
+
+
     //ArrayList<UserBean> findByGroup_users(Integer group_users);
+
 
 }
