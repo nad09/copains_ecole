@@ -14,7 +14,6 @@ public class CopainsEcoleApplication {
 		System.out.println("Test Corentin  !");
 		System.out.println("Test Brod  !");
 		System.out.println("Test Jerome  !");
-
 	}
 
 }
