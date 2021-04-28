@@ -1,14 +1,14 @@
 package com.example.copains_ecole.controller;
 
+import com.example.copains_ecole.exceptions.MissingInformationException;
+import com.example.copains_ecole.exceptions.NotFoundUserException;
+import com.example.copains_ecole.exceptions.PseudoNotNullException;
 import com.example.copains_ecole.model.UserBean;
 import com.example.copains_ecole.model.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Optional;
 
 
 @RestController
@@ -32,71 +32,57 @@ public class UsersRestController {
         Double longitude = user.getLongitude();
         Double latitude = user.getLatitude();
         if (longitude != null && latitude != null) {
-            try {
                 UserBean userToUpdate = userDao.getOne(user.getId());
                 userToUpdate.setLongitude(longitude);
                 userToUpdate.setLatitude(latitude);
                 userDao.save(userToUpdate);
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-        } else{
-            System.out.println("loongitude et latitude manquantes");
+        } else {
+            throw new MissingInformationException();
         }
     }
 
     //http://localhost:8080/login
     @PostMapping("/login")
-    public Long login(@RequestBody UserBean user) {
+    public UserBean login(@RequestBody UserBean user) {
         System.out.println("/login " + user.getPseudo() + " " + user.getPassword());
-        ArrayList<UserBean> users = getUsers();
+
         String pseudo = user.getPseudo();
         String password = user.getPassword();
-        Long userId = null;
+        UserBean userToLog = userDao.findByPseudo(pseudo);
 
-        if (pseudo != null && password != null) {
-            try {
-                for (UserBean userBean : users) {
-                    if (pseudo.equals(userBean.getPseudo()) && password.equals(userBean.getPassword())) {
-                        System.out.println("True");
-                        userId = userBean.getId();
-                    } else {
-                        System.out.println("Merci de vous enregistrer");
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (userToLog != null){
+            if(userToLog.getPassword().equals(password)){
+                UserBean userReturn = new UserBean();
+                userReturn.setId(userToLog.getId());
+                return userReturn;
+            } else {
+                throw new NotFoundUserException();
             }
         } else {
-            System.out.println("pseudo ou password manquant");
+            throw new MissingInformationException();
         }
-        System.out.println(userId);
-        return userId;
     }
+//http://localhost:8080/register
+@PostMapping("/register")
+public UserBean register(@RequestBody UserBean user)  {
+    System.out.println("/register " + user.getPseudo() + user.getPassword());
 
-    //http://localhost:8080/register
-    @PostMapping("/register")
-    public Long register(@RequestBody UserBean user) {
-        String pseudo = user.getPseudo();
-        String password = user.getPassword();
-        Long userId = null;
+    String pseudo = user.getPseudo();
+    String password = user.getPassword();
 
-        if (pseudo != null && password != null) {
-            try {
-                System.out.println("/register " + user.getPseudo() + user.getPassword());
-                userDao.save(user);
-                userId = user.getId();
+    if (pseudo==null || pseudo.isEmpty() || password==null || password.isEmpty()){
+        throw new MissingInformationException();
+    } else if(userDao.findByPseudo(pseudo) != null){
+        throw new PseudoNotNullException();
+    } else {
+        user.setGroup_users(1);
+        userDao.save(user);
+        UserBean response = new UserBean();
+        response.setId(user.getId());
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-                System.out.println("Merci de renseigner un pseudo et un password");
-            }
-
-        System.out.println(userId);
-        return userId;
-        }
-
+        return response;
     }
+}
+
+}
 

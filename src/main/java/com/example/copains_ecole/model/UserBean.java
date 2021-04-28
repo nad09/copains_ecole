@@ -11,7 +11,6 @@ public class UserBean {
     private Long id;
     private String pseudo;
     private String password;
-    private Long timestamp;
     private Double longitude;
     private Double latitude;
     private Integer group_users;
@@ -40,14 +39,6 @@ public class UserBean {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Long timestamp) {
-        this.timestamp = timestamp;
     }
 
     public Double getLongitude() {
