@@ -11,8 +11,6 @@ public class CopainsEcoleApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CopainsEcoleApplication.class, args);
 
-		System.out.println("Test Corentin  !");
-		System.out.println("Test Brod  !");
 	}
 
 }
