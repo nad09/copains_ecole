@@ -14,8 +14,17 @@ public class UserBean {
     private Double longitude;
     private Double latitude;
     private Integer group_users;
+    private String session;
 
     public UserBean() {}
+
+    public UserBean(String pseudo, Double longitude, Double latitude, Integer group_users, String session) {
+        this.pseudo = pseudo;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.group_users = group_users;
+        this.session = session;
+    }
 
     public Long getId() {
         return id;
@@ -64,4 +73,14 @@ public class UserBean {
     public void setGroup_users(Integer group_users) {
         this.group_users = group_users;
     }
+
+    public String getSession() {
+        return session;
+    }
+
+    public void setSession(String session) {
+        this.session = session;
+    }
+
+
 }

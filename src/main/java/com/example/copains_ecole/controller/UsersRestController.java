@@ -1,13 +1,17 @@
 package com.example.copains_ecole.controller;
 
+import com.example.copains_ecole.BCrypt;
 import com.example.copains_ecole.exceptions.MissingInformationException;
 import com.example.copains_ecole.exceptions.NotFoundUserException;
 import com.example.copains_ecole.exceptions.PseudoNotNullException;
 import com.example.copains_ecole.model.UserBean;
 import com.example.copains_ecole.model.dao.UserDao;
+import javafx.css.Styleable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 
 
@@ -22,7 +26,7 @@ public class UsersRestController {
     @GetMapping("/getUsers")
     public ArrayList<UserBean> getUsers() {
         System.out.println("/getUsers");
-        return (ArrayList<UserBean>) userDao.findAll();
+        return userDao.getPseudoLonLatSession();
     }
 
     //http://localhost:8080/setUserCoord
@@ -51,9 +55,10 @@ public class UsersRestController {
         UserBean userToLog = userDao.findByPseudo(pseudo);
 
         if (userToLog != null){
-            if(userToLog.getPassword().equals(password)){
+            if (BCrypt.checkpw(password,userToLog.getPassword())) {
                 UserBean userReturn = new UserBean();
-                userReturn.setId(userToLog.getId());
+                userReturn.setSession(userToLog.getSession());
+
                 return userReturn;
             } else {
                 throw new NotFoundUserException();
@@ -62,13 +67,16 @@ public class UsersRestController {
             throw new MissingInformationException();
         }
     }
+
 //http://localhost:8080/register
 @PostMapping("/register")
-public UserBean register(@RequestBody UserBean user)  {
+public UserBean register(@RequestBody UserBean user, HttpSession session)  {
     System.out.println("/register " + user.getPseudo() + user.getPassword());
 
     String pseudo = user.getPseudo();
     String password = user.getPassword();
+
+    String sessionId = (String) session.getId();
 
     if (pseudo==null || pseudo.isEmpty() || password==null || password.isEmpty()){
         throw new MissingInformationException();
@@ -76,10 +84,16 @@ public UserBean register(@RequestBody UserBean user)  {
         throw new PseudoNotNullException();
     } else {
         user.setGroup_users(1);
-        userDao.save(user);
-        UserBean response = new UserBean();
-        response.setId(user.getId());
 
+        String hashed = BCrypt.hashpw(pseudo, BCrypt.gensalt());
+        user.setPassword(hashed);
+
+        user.setSession(sessionId);
+        userDao.save(user);
+
+        UserBean response = new UserBean();
+        response.setSession(user.getSession());
+        
         return response;
     }
 }
