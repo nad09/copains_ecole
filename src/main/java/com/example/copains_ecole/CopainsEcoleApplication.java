@@ -10,7 +10,9 @@ public class CopainsEcoleApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CopainsEcoleApplication.class, args);
-
 	}
+
+
+
 
 }

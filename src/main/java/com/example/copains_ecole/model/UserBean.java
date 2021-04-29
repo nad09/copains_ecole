@@ -13,7 +13,18 @@ public class UserBean {
     private Double latitude;
     private Integer group_users;
 
-    public UserBean() { }
+    public UserBean() {
+
+    }
+
+    public UserBean(String pseudo, Double longitude, Double latitude, Integer group_users) {
+        this.pseudo = pseudo;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.group_users = group_users;
+    }
+
+
 
     public Long getId() {
         return id;

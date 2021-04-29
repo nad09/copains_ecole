@@ -1,11 +1,13 @@
 package com.example.copains_ecole.controller;
 
+import com.example.copains_ecole.BCrypt;
 import com.example.copains_ecole.exception.MissingInformationException;
 import com.example.copains_ecole.exception.NotFoundUserException;
 import com.example.copains_ecole.exception.PseudoNotNullException;
 import com.example.copains_ecole.model.UserBean;
 import com.example.copains_ecole.model.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,9 +24,10 @@ public class UserRestController {
 
     //http://localhost:8080/getUsers
     @GetMapping("/getUsers")
-    public List<UserBean> getUsers() {
-        List<UserBean> users = userDao.findAll();
-        return users;
+    public ArrayList<UserBean> getUsers() {
+        System.out.println("/getUsers");
+//        return (ArrayList<UserBean>) userDao.findAll();
+        return (ArrayList<UserBean>) userDao.getPseudoLonLat();
     }
 
     //http://localhost:8080/setUserCoord
@@ -53,7 +56,7 @@ public class UserRestController {
         UserBean userToLog = userDao.findByPseudo(pseudo);
 
         if (userToLog != null) {
-            if (userToLog.getPassword().equals(password)) {
+            if (BCrypt.checkpw(password,userToLog.getPassword())) {
                 UserBean userReturn = new UserBean();
                 userReturn.setId(userToLog.getId());
                 return userReturn;
@@ -79,6 +82,8 @@ public class UserRestController {
             throw new PseudoNotNullException();
         } else {
             user.setGroup_users(1);
+            String hashed = BCrypt.hashpw(pseudo, BCrypt.gensalt());
+            user.setPassword(hashed);
             userDao.save(user);
             UserBean response = new UserBean();
             response.setId(user.getId());
