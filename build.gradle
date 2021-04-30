@@ -18,7 +18,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly 'mysql:mysql-connector-java'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:2.1.2'
     implementation 'com.squareup.okhttp3:okhttp:4.+'
     implementation 'com.google.code.gson:gson:2.8.6'
 }
