@@ -14,10 +14,11 @@ public interface UserDao extends JpaRepository<UserBean, Long> {
 
     UserBean findByPseudo(String pseudo);
 
-    @Query("Select NEW com.example.copains_ecole.model.UserBean(pseudo, longitude, latitude, group_users, session) from UserBean")
+    UserBean findBySession(String session);
+
+    @Query("Select NEW com.example.copains_ecole.model.UserBean(pseudo, longitude, latitude, group_users, session) from UserBean where latitude IS NOT NULL and longitude IS NOT NULL ")
     ArrayList<UserBean> getPseudoLonLatSession();
 
-    //ArrayList<UserBean> findByGroup_users(Integer group_users);
 
 
 }

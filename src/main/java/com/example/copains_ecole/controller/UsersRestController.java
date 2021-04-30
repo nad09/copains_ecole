@@ -36,10 +36,12 @@ public class UsersRestController {
         Double longitude = user.getLongitude();
         Double latitude = user.getLatitude();
         if (longitude != null && latitude != null) {
-                UserBean userToUpdate = userDao.getOne(user.getId());
+                UserBean userToUpdate = userDao.findBySession(user.getSession());
                 userToUpdate.setLongitude(longitude);
                 userToUpdate.setLatitude(latitude);
                 userDao.save(userToUpdate);
+                //userToUpdate.setPassword("");
+                //return userToUpdate;
         } else {
             throw new MissingInformationException();
         }
@@ -58,8 +60,8 @@ public class UsersRestController {
             if (BCrypt.checkpw(password,userToLog.getPassword())) {
                 UserBean userReturn = new UserBean();
                 userReturn.setSession(userToLog.getSession());
-
                 return userReturn;
+                //return userToLog;
             } else {
                 throw new NotFoundUserException();
             }
@@ -71,7 +73,7 @@ public class UsersRestController {
 //http://localhost:8080/register
 @PostMapping("/register")
 public UserBean register(@RequestBody UserBean user, HttpSession session)  {
-    System.out.println("/register " + user.getPseudo() + user.getPassword());
+    System.out.println("/register " + user.getPseudo() + " " + user.getPassword());
 
     String pseudo = user.getPseudo();
     String password = user.getPassword();
